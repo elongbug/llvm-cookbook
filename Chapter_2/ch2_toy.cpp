@@ -401,7 +401,7 @@ int main(int argc, char* argv[]) {
   next_token();
   Module_Ob = new Module("my compiler", Context);
   Driver();
-  Module_Ob->dump();
+  Module_Ob->print(llvm::outs(),nullptr);
   return 0;
 }
 	
