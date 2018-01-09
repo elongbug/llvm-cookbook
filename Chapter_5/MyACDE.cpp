@@ -14,7 +14,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "llvm/Transforms/Scalar.h"
 #include "llvm/ADT/DepthFirstIterator.h"
 #include "llvm/ADT/SmallPtrSet.h"
 #include "llvm/ADT/SmallVector.h"
@@ -25,6 +24,7 @@
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/IntrinsicInst.h"
 #include "llvm/Pass.h"
+#include "llvm/Transforms/Scalar.h"
 using namespace llvm;
 
 namespace {
@@ -34,23 +34,24 @@ struct MYADCE : public FunctionPass {
     initializeMYADCEPass(*PassRegistry::getPassRegistry());
   }
 
-  bool runOnFunction(Function& F) override;
+  bool runOnFunction(Function &F) override;
 
-  void getAnalysisUsage(AnalysisUsage& AU) const override {
+  void getAnalysisUsage(AnalysisUsage &AU) const override {
     AU.setPreservesCFG();
   }
 };
-}
+} // namespace
 
 char MYADCE::ID = 0;
-INITIALIZE_PASS(MYADCE, "myadce", "Aggressive Dead Code Elimination", false, false)
+INITIALIZE_PASS(MYADCE, "myadce", "Aggressive Dead Code Elimination", false,
+                false)
 
-bool MYADCE::runOnFunction(Function& F) {
+bool MYADCE::runOnFunction(Function &F) {
   if (skipOptnoneFunction(F))
     return false;
 
-  SmallPtrSet<Instruction*, 128> Alive;
-  SmallVector<Instruction*, 128> Worklist;
+  SmallPtrSet<Instruction *, 128> Alive;
+  SmallVector<Instruction *, 128> Worklist;
 
   // Collect the set of "root" instructions that are known live.
   for (Instruction &I : inst_range(F)) {
@@ -89,6 +90,4 @@ bool MYADCE::runOnFunction(Function& F) {
   return !Worklist.empty();
 }
 
-FunctionPass *llvm::createMYAggressiveDCEPass() {
-  return new MYADCE();
-}
+FunctionPass *llvm::createMYAggressiveDCEPass() { return new MYADCE(); }

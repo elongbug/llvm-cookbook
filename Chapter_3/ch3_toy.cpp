@@ -19,7 +19,6 @@
 #include <vector>
 using namespace llvm;
 
-
 enum Token {
   EOF_TOKEN = -1,
 
@@ -39,8 +38,8 @@ enum Token {
 };
 
 FILE *file;
-static std::string Identifier_string; 
-static int Numeric_Val;             
+static std::string Identifier_string;
+static int Numeric_Val;
 
 static int get_token() {
   static int LastChar = ' ';
@@ -48,7 +47,7 @@ static int get_token() {
   while (isspace(LastChar))
     LastChar = fgetc(file);
 
-  if (isalpha(LastChar)) { 
+  if (isalpha(LastChar)) {
     Identifier_string = LastChar;
     while (isalnum((LastChar = fgetc(file))))
       Identifier_string += LastChar;
@@ -72,7 +71,7 @@ static int get_token() {
     return IDENTIFIER_TOKEN;
   }
 
-  if (isdigit(LastChar) || LastChar == '.') { 
+  if (isdigit(LastChar) || LastChar == '.') {
     std::string NumStr;
     do {
       NumStr += LastChar;
@@ -177,11 +176,13 @@ class FunctionDeclAST {
   std::string Func_Name;
   std::vector<std::string> Arguments;
   bool isOperator;
-  unsigned Precedence; 
+  unsigned Precedence;
+
 public:
   FunctionDeclAST(const std::string &name, const std::vector<std::string> &args,
-               bool isoperator = false, unsigned prec = 0)
-      : Func_Name(name), Arguments(args), isOperator(isoperator), Precedence(prec) {}
+                  bool isoperator = false, unsigned prec = 0)
+      : Func_Name(name), Arguments(args), isOperator(isoperator),
+        Precedence(prec) {}
 
   bool isUnaryOp() const { return isOperator && Arguments.size() == 1; }
   bool isBinaryOp() const { return isOperator && Arguments.size() == 2; }
@@ -201,11 +202,12 @@ class FunctionDefnAST {
   BaseAST *Body;
 
 public:
-  FunctionDefnAST(FunctionDeclAST *proto, BaseAST *body) : Func_Decl(proto), Body(body) {}
+  FunctionDefnAST(FunctionDeclAST *proto, BaseAST *body)
+      : Func_Decl(proto), Body(body) {}
 
   Function *Codegen();
 };
-} 
+} // namespace
 
 static int Current_token;
 static int next_token() { return Current_token = get_token(); }
@@ -227,12 +229,12 @@ static BaseAST *expression_parser();
 static BaseAST *identifier_parser() {
   std::string IdName = Identifier_string;
 
-  next_token(); 
+  next_token();
 
-  if (Current_token != '(') 
+  if (Current_token != '(')
     return new VariableAST(IdName);
 
-  next_token(); 
+  next_token();
   std::vector<BaseAST *> Arguments;
   if (Current_token != ')') {
     while (1) {
@@ -257,24 +259,24 @@ static BaseAST *identifier_parser() {
 
 static BaseAST *numeric_parser() {
   BaseAST *Result = new NumericAST(Numeric_Val);
-  next_token(); 
+  next_token();
   return Result;
 }
 
 static BaseAST *paran_parser() {
-  next_token(); 
+  next_token();
   BaseAST *V = expression_parser();
   if (!V)
     return 0;
 
   if (Current_token != ')')
     return 0;
-  next_token(); 
+  next_token();
   return V;
 }
 
 static BaseAST *If_parser() {
-  next_token(); 
+  next_token();
 
   BaseAST *Cond = expression_parser();
   if (!Cond)
@@ -282,7 +284,7 @@ static BaseAST *If_parser() {
 
   if (Current_token != THEN_TOKEN)
     return 0;
-  next_token(); 
+  next_token();
 
   BaseAST *Then = expression_parser();
   if (Then == 0)
@@ -301,17 +303,17 @@ static BaseAST *If_parser() {
 }
 
 static BaseAST *For_parser() {
-  next_token(); 
+  next_token();
 
   if (Current_token != IDENTIFIER_TOKEN)
     return 0;
 
   std::string IdName = Identifier_string;
-  next_token(); 
+  next_token();
 
   if (Current_token != '=')
     return 0;
-  next_token(); 
+  next_token();
 
   BaseAST *Start = expression_parser();
   if (Start == 0)
@@ -334,7 +336,7 @@ static BaseAST *For_parser() {
 
   if (Current_token != IN_TOKEN)
     return 0;
-  next_token(); 
+  next_token();
 
   BaseAST *Body = expression_parser();
   if (Body == 0)
@@ -371,7 +373,6 @@ static BaseAST *unary_parser() {
   return 0;
 }
 
-
 static BaseAST *binary_op_parser(int Old_Prec, BaseAST *LHS) {
   while (1) {
     int Operator_Prec = getBinOpPrecedence();
@@ -380,7 +381,7 @@ static BaseAST *binary_op_parser(int Old_Prec, BaseAST *LHS) {
       return LHS;
 
     int BinOp = Current_token;
-    next_token(); 
+    next_token();
 
     BaseAST *RHS = unary_parser();
     if (!RHS)
@@ -408,7 +409,7 @@ static BaseAST *expression_parser() {
 static FunctionDeclAST *func_decl_parser() {
   std::string FnName;
 
-  unsigned Kind = 0; 
+  unsigned Kind = 0;
   unsigned BinaryPrecedence = 30;
 
   switch (Current_token) {
@@ -455,7 +456,7 @@ static FunctionDeclAST *func_decl_parser() {
   if (Current_token != ')')
     return 0;
 
-  next_token(); 
+  next_token();
 
   if (Kind && ArgNames.size() != Kind)
     return 0;
@@ -464,7 +465,7 @@ static FunctionDeclAST *func_decl_parser() {
 }
 
 static FunctionDefnAST *func_defn_parser() {
-  next_token(); 
+  next_token();
   FunctionDeclAST *Func_Decl = func_decl_parser();
   if (Func_Decl == 0)
     return 0;
@@ -476,18 +477,17 @@ static FunctionDefnAST *func_defn_parser() {
 
 static FunctionDefnAST *top_level_parser() {
   if (BaseAST *E = expression_parser()) {
-    FunctionDeclAST *Func_Decl = new FunctionDeclAST("", std::vector<std::string>());
+    FunctionDeclAST *Func_Decl =
+        new FunctionDeclAST("", std::vector<std::string>());
     return new FunctionDefnAST(Func_Decl, E);
   }
   return 0;
 }
 
-
 static Module *Module_Ob;
 static IRBuilder<> Builder(getGlobalContext());
 static std::map<std::string, Value *> Named_Values;
 static legacy::FunctionPassManager *Global_FP;
-
 
 Value *NumericAST::Codegen() {
   return ConstantInt::get(Type::getInt32Ty(getGlobalContext()), numeric_val);
@@ -526,7 +526,7 @@ Value *BinaryAST::Codegen() {
   case '<':
     L = Builder.CreateICmpULT(L, R, "cmptmp");
     return Builder.CreateZExt(L, Type::getInt32Ty(getGlobalContext()),
-                                "booltmp");
+                              "booltmp");
   default:
     break;
   }
@@ -534,7 +534,7 @@ Value *BinaryAST::Codegen() {
   Function *F = Module_Ob->getFunction(std::string("binary") + Bin_Operator);
   assert(F && "binary operator not found!");
 
-  Value *Ops[] = { L, R };
+  Value *Ops[] = {L, R};
   return Builder.CreateCall(F, Ops, "binop");
 }
 
@@ -562,10 +562,10 @@ Value *ExprIfAST::Codegen() {
     return 0;
 
   CondV = Builder.CreateICmpNE(
-      CondV, ConstantInt::get(Type::getInt32Ty(getGlobalContext()), 0), "ifcond");
+      CondV, ConstantInt::get(Type::getInt32Ty(getGlobalContext()), 0),
+      "ifcond");
 
   Function *TheFunction = Builder.GetInsertBlock()->getParent();
-
 
   BasicBlock *ThenBB =
       BasicBlock::Create(getGlobalContext(), "then", TheFunction);
@@ -609,7 +609,6 @@ Value *ExprForAST::Codegen() {
   if (StartVal == 0)
     return 0;
 
-
   Function *TheFunction = Builder.GetInsertBlock()->getParent();
   BasicBlock *PreheaderBB = Builder.GetInsertBlock();
   BasicBlock *LoopBB =
@@ -619,15 +618,13 @@ Value *ExprForAST::Codegen() {
 
   Builder.SetInsertPoint(LoopBB);
 
-  PHINode *Variable = Builder.CreatePHI(Type::getInt32Ty(getGlobalContext()),
-                                        2, Var_Name.c_str());
+  PHINode *Variable = Builder.CreatePHI(Type::getInt32Ty(getGlobalContext()), 2,
+                                        Var_Name.c_str());
   Variable->addIncoming(StartVal, PreheaderBB);
 
- 
   Value *OldVal = Named_Values[Var_Name];
   Named_Values[Var_Name] = Variable;
 
- 
   if (Body->Codegen() == 0)
     return 0;
 
@@ -637,7 +634,7 @@ Value *ExprForAST::Codegen() {
     if (StepVal == 0)
       return 0;
   } else {
-  
+
     StepVal = ConstantInt::get(Type::getInt32Ty(getGlobalContext()), 1);
   }
 
@@ -648,7 +645,8 @@ Value *ExprForAST::Codegen() {
     return EndCond;
 
   EndCond = Builder.CreateICmpNE(
-      EndCond, ConstantInt::get(Type::getInt32Ty(getGlobalContext()), 0), "loopcond");
+      EndCond, ConstantInt::get(Type::getInt32Ty(getGlobalContext()), 0),
+      "loopcond");
 
   BasicBlock *LoopEndBB = Builder.GetInsertBlock();
   BasicBlock *AfterBB =
@@ -670,14 +668,13 @@ Value *ExprForAST::Codegen() {
 
 Function *FunctionDeclAST::Codegen() {
   std::vector<Type *> Integers(Arguments.size(),
-                              Type::getInt32Ty(getGlobalContext()));
+                               Type::getInt32Ty(getGlobalContext()));
   FunctionType *FT =
       FunctionType::get(Type::getInt32Ty(getGlobalContext()), Integers, false);
 
   Function *F =
       Function::Create(FT, Function::ExternalLinkage, Func_Name, Module_Ob);
 
-  
   if (F->getName() != Func_Name) {
     F->eraseFromParent();
     F = Module_Ob->getFunction(Func_Name);
@@ -710,7 +707,8 @@ Function *FunctionDefnAST::Codegen() {
     return 0;
 
   if (Func_Decl->isBinaryOp())
-    Operator_Precedence[Func_Decl->getOperatorName()] = Func_Decl->getBinaryPrecedence();
+    Operator_Precedence[Func_Decl->getOperatorName()] =
+        Func_Decl->getBinaryPrecedence();
 
   BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
   Builder.SetInsertPoint(BB);
@@ -743,7 +741,6 @@ static void HandleDefinition() {
   }
 }
 
-
 static void HandleTopLevelExpression() {
   if (FunctionDefnAST *F = top_level_parser()) {
     if (Function *LF = F->Codegen()) {
@@ -765,7 +762,7 @@ static void Driver() {
       return;
     case ';':
       next_token();
-      break; 
+      break;
     case DEF_TOKEN:
       HandleDefinition();
       break;
@@ -775,7 +772,6 @@ static void Driver() {
     }
   }
 }
-
 
 extern "C" double putchard(double X) {
   putchar((char)X);
@@ -795,16 +791,16 @@ static void init_precedence() {
   Operator_Precedence['*'] = 50;
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   InitializeNativeTarget();
   InitializeNativeTargetAsmPrinter();
   InitializeNativeTargetAsmParser();
   LLVMContext &Context = getGlobalContext();
 
-  init_precedence();  
+  init_precedence();
 
   file = fopen(argv[1], "r");
-  if(file == 0) {
+  if (file == 0) {
     printf("Could not open file\n");
   }
   next_token();

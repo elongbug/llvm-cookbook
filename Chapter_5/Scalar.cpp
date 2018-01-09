@@ -18,9 +18,9 @@
 #include "llvm-c/Transforms/Scalar.h"
 #include "llvm/Analysis/Passes.h"
 #include "llvm/IR/DataLayout.h"
+#include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Verifier.h"
 #include "llvm/InitializePasses.h"
-#include "llvm/IR/LegacyPassManager.h"
 
 using namespace llvm;
 
@@ -113,9 +113,7 @@ void LLVMAddScalarizerPass(LLVMPassManagerRef PM) {
   unwrap(PM)->add(createScalarizerPass());
 }
 
-void LLVMAddGVNPass(LLVMPassManagerRef PM) {
-  unwrap(PM)->add(createGVNPass());
-}
+void LLVMAddGVNPass(LLVMPassManagerRef PM) { unwrap(PM)->add(createGVNPass()); }
 
 void LLVMAddMergedLoadStoreMotionPass(LLVMPassManagerRef PM) {
   unwrap(PM)->add(createMergedLoadStoreMotionPass());

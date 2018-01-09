@@ -9,8 +9,7 @@ void throw_exception(int a, int b) {
 int test_try_catch() {
   try {
     throw_exception(2, 1);
-  }
-  catch(...) {
+  } catch (...) {
     return 1;
   }
   return 0;

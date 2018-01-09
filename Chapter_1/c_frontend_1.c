@@ -1,4 +1,2 @@
 #define MAX 100
-void func() {
-int a[MAX];
-}
+void func() { int a[MAX]; }
