@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../../../libLLVMLEGAsmPrinter.a  CMakeFiles/LLVMLEGAsmPrinter.dir/LEGInstPrinter.cpp.o
+/usr/bin/ranlib ../../../libLLVMLEGAsmPrinter.a

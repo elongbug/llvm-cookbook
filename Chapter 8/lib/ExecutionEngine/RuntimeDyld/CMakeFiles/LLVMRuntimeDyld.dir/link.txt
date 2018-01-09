@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../../libLLVMRuntimeDyld.a  CMakeFiles/LLVMRuntimeDyld.dir/GDBRegistrar.cpp.o CMakeFiles/LLVMRuntimeDyld.dir/RuntimeDyld.cpp.o CMakeFiles/LLVMRuntimeDyld.dir/RuntimeDyldChecker.cpp.o CMakeFiles/LLVMRuntimeDyld.dir/RuntimeDyldELF.cpp.o CMakeFiles/LLVMRuntimeDyld.dir/RuntimeDyldMachO.cpp.o
+/usr/bin/ranlib ../../libLLVMRuntimeDyld.a

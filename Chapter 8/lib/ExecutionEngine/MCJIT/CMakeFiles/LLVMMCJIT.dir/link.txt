@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../../libLLVMMCJIT.a  CMakeFiles/LLVMMCJIT.dir/MCJIT.cpp.o CMakeFiles/LLVMMCJIT.dir/SectionMemoryManager.cpp.o
+/usr/bin/ranlib ../../libLLVMMCJIT.a

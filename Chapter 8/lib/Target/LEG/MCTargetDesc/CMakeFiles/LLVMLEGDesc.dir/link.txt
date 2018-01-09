@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../../../libLLVMLEGDesc.a  CMakeFiles/LLVMLEGDesc.dir/LEGMCTargetDesc.cpp.o CMakeFiles/LLVMLEGDesc.dir/LEGMCAsmInfo.cpp.o CMakeFiles/LLVMLEGDesc.dir/LEGMCCodeEmitter.cpp.o CMakeFiles/LLVMLEGDesc.dir/LEGAsmBackend.cpp.o CMakeFiles/LLVMLEGDesc.dir/LEGELFObjectWriter.cpp.o
+/usr/bin/ranlib ../../../libLLVMLEGDesc.a

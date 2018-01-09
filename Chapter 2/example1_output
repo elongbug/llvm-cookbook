@@ -1,0 +1,8 @@
+; ModuleID = 'my compiler'
+
+define i32 @foo(i32 %x, i32 %y) {
+entry:
+  %multmp = mul i32 %y, 16
+  %addtmp = add i32 %x, %multmp
+  ret i32 %addtmp
+}

@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../../../libLLVMTOYAsmPrinter.a  CMakeFiles/LLVMTOYAsmPrinter.dir/TOYInstPrinter.cpp.o
+/usr/bin/ranlib ../../../libLLVMTOYAsmPrinter.a

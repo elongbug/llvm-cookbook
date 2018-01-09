@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../libLLVMTarget.a  CMakeFiles/LLVMTarget.dir/Target.cpp.o CMakeFiles/LLVMTarget.dir/TargetIntrinsicInfo.cpp.o CMakeFiles/LLVMTarget.dir/TargetLibraryInfo.cpp.o CMakeFiles/LLVMTarget.dir/TargetLoweringObjectFile.cpp.o CMakeFiles/LLVMTarget.dir/TargetMachine.cpp.o CMakeFiles/LLVMTarget.dir/TargetMachineC.cpp.o CMakeFiles/LLVMTarget.dir/TargetSubtargetInfo.cpp.o
+/usr/bin/ranlib ../libLLVMTarget.a

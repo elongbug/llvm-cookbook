@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../libLLVMLinker.a  CMakeFiles/LLVMLinker.dir/LinkModules.cpp.o
+/usr/bin/ranlib ../libLLVMLinker.a

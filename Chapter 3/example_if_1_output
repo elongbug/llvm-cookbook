@@ -1,0 +1,9 @@
+; ModuleID = 'my compiler'
+target datalayout = "e-m:e-p:32:32-f64:32:64-f80:32-n8:16:32-S128"
+
+define i32 @foo(i32 %x) {
+entry:
+  %cmptmp = icmp ult i32 %x, 3
+  %. = select i1 %cmptmp, i32 1, i32 0
+  ret i32 %.
+}

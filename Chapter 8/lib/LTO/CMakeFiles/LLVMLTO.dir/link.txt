@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../libLLVMLTO.a  CMakeFiles/LLVMLTO.dir/LTOModule.cpp.o CMakeFiles/LLVMLTO.dir/LTOCodeGenerator.cpp.o
+/usr/bin/ranlib ../libLLVMLTO.a

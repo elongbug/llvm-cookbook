@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../../libLLVMInstrumentation.a  CMakeFiles/LLVMInstrumentation.dir/AddressSanitizer.cpp.o CMakeFiles/LLVMInstrumentation.dir/BoundsChecking.cpp.o CMakeFiles/LLVMInstrumentation.dir/DataFlowSanitizer.cpp.o CMakeFiles/LLVMInstrumentation.dir/DebugIR.cpp.o CMakeFiles/LLVMInstrumentation.dir/GCOVProfiling.cpp.o CMakeFiles/LLVMInstrumentation.dir/MemorySanitizer.cpp.o CMakeFiles/LLVMInstrumentation.dir/Instrumentation.cpp.o CMakeFiles/LLVMInstrumentation.dir/ThreadSanitizer.cpp.o
+/usr/bin/ranlib ../../libLLVMInstrumentation.a

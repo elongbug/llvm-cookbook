@@ -1,0 +1,8 @@
+Evaluated to -nan
+; ModuleID = 'my compiler'
+target datalayout = "e-m:e-p:32:32-f64:32:64-f80:32-n8:16:32-S128"
+
+define i32 @0() {
+entry:
+  ret i32 9
+}

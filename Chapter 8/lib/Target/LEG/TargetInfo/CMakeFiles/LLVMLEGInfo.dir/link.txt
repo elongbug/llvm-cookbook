@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../../../libLLVMLEGInfo.a  CMakeFiles/LLVMLEGInfo.dir/LEGTargetInfo.cpp.o
+/usr/bin/ranlib ../../../libLLVMLEGInfo.a

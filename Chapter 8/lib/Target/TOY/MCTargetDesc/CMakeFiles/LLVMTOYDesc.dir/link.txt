@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../../../libLLVMTOYDesc.a  CMakeFiles/LLVMTOYDesc.dir/TOYMCTargetDesc.cpp.o CMakeFiles/LLVMTOYDesc.dir/TOYMCAsmInfo.cpp.o CMakeFiles/LLVMTOYDesc.dir/TOYMCCodeEmitter.cpp.o CMakeFiles/LLVMTOYDesc.dir/TOYAsmBackend.cpp.o CMakeFiles/LLVMTOYDesc.dir/TOYELFObjectWriter.cpp.o
+/usr/bin/ranlib ../../../libLLVMTOYDesc.a

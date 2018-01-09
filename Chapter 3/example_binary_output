@@ -1,0 +1,11 @@
+; ModuleID = 'my compiler'
+target datalayout = "e-m:e-p:32:32-f64:32:64-f80:32-n8:16:32-S128"
+
+define i32 @"binary|"(i32 %LHS, i32 %RHS) {
+entry:
+  %ifcond = icmp eq i32 %LHS, 0
+  %ifcond1 = icmp eq i32 %RHS, 0
+  %. = select i1 %ifcond1, i32 0, i32 1
+  %iftmp5 = select i1 %ifcond, i32 %., i32 1
+  ret i32 %iftmp5
+}

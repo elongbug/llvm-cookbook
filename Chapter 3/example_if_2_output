@@ -1,0 +1,20 @@
+; ModuleID = 'my compiler'
+target datalayout = "e-m:e-p:32:32-f64:32:64-f80:32-n8:16:32-S128"
+
+define i32 @fib(i32 %x) {
+entry:
+  %cmptmp = icmp ult i32 %x, 3
+  br i1 %cmptmp, label %ifcont, label %else
+
+else:                                             ; preds = %entry
+  %subtmp = add i32 %x, -1
+  %calltmp = call i32 @fib(i32 %subtmp)
+  %subtmp1 = add i32 %x, -2
+  %calltmp2 = call i32 @fib(i32 %subtmp1)
+  %addtmp = add i32 %calltmp2, %calltmp
+  br label %ifcont
+
+ifcont:                                           ; preds = %entry, %else
+  %iftmp = phi i32 [ %addtmp, %else ], [ 1, %entry ]
+  ret i32 %iftmp
+}

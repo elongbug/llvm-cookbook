@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../../../libLLVMTOYInfo.a  CMakeFiles/LLVMTOYInfo.dir/TOYTargetInfo.cpp.o
+/usr/bin/ranlib ../../../libLLVMTOYInfo.a

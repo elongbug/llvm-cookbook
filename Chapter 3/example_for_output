@@ -1,0 +1,16 @@
+; ModuleID = 'my compiler'
+target datalayout = "e-m:e-p:32:32-f64:32:64-f80:32-n8:16:32-S128"
+
+define i32 @printstar(i32 %n, i32 %x) {
+entry:
+  br label %loop
+
+loop:                                             ; preds = %loop, %entry
+  %i = phi i32 [ 1, %entry ], [ %nextvar, %loop ]
+  %nextvar = add i32 %i, 1
+  %cmptmp = icmp ult i32 %i, %n
+  br i1 %cmptmp, label %loop, label %afterloop
+
+afterloop:                                        ; preds = %loop
+  ret i32 0
+}
