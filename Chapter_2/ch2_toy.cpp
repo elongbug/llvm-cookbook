@@ -269,11 +269,12 @@ static void init_precedence() {
 }
 
 static Module *Module_Ob;
-static IRBuilder<> Builder(getGlobalContext());
+static LLVMContext MyGlobalContext;
+static IRBuilder<> Builder(MyGlobalContext);
 static std::map<std::string, Value*> Named_Values;
 
 Value *NumericAST::Codegen() {
-  return ConstantInt::get(Type::getInt32Ty(getGlobalContext()), numeric_val);
+  return ConstantInt::get(Type::getInt32Ty(MyGlobalContext), numeric_val);
 }
 
 Value *VariableAST::Codegen() {
@@ -308,8 +309,8 @@ Value *FunctionCallAST::Codegen() {
 }
 
 Function *FunctionDeclAST::Codegen() {
-  std::vector<Type*>Integers(Arguments.size(), Type::getInt32Ty(getGlobalContext()));
-  FunctionType *FT = FunctionType::get(Type::getInt32Ty(getGlobalContext()), Integers, false);
+  std::vector<Type*>Integers(Arguments.size(), Type::getInt32Ty(MyGlobalContext));
+  FunctionType *FT = FunctionType::get(Type::getInt32Ty(MyGlobalContext), Integers, false);
   Function *F = Function::Create(FT, Function::ExternalLinkage, Func_Name, Module_Ob);
   
   if(F->getName() != Func_Name) {
@@ -338,7 +339,7 @@ Function *FunctionDefnAST::Codegen() {
   Function *TheFunction = Func_Decl->Codegen();
   if(TheFunction == 0) return 0;
   
-  BasicBlock *BB = BasicBlock::Create(getGlobalContext(),"entry", TheFunction);
+  BasicBlock *BB = BasicBlock::Create(MyGlobalContext,"entry", TheFunction);
   Builder.SetInsertPoint(BB);
   
   if(Value *RetVal = Body->Codegen()) {
@@ -389,7 +390,7 @@ double putchard(double X) {
 }
 
 int main(int argc, char* argv[]) {
-  LLVMContext &Context = getGlobalContext();
+  LLVMContext &Context = MyGlobalContext;
   init_precedence();
   
   file = fopen(argv[1], "r");
