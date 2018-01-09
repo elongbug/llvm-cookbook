@@ -485,12 +485,13 @@ static FunctionDefnAST *top_level_parser() {
 }
 
 static Module *Module_Ob;
-static IRBuilder<> Builder(getGlobalContext());
+static LLVMContext MyGlobalContext;
+static IRBuilder<> Builder(MyGlobalContext);
 static std::map<std::string, Value *> Named_Values;
 static legacy::FunctionPassManager *Global_FP;
 
 Value *NumericAST::Codegen() {
-  return ConstantInt::get(Type::getInt32Ty(getGlobalContext()), numeric_val);
+  return ConstantInt::get(Type::getInt32Ty(MyGlobalContext), numeric_val);
 }
 
 Value *VariableAST::Codegen() {
@@ -525,7 +526,7 @@ Value *BinaryAST::Codegen() {
     return Builder.CreateMul(L, R, "multmp");
   case '<':
     L = Builder.CreateICmpULT(L, R, "cmptmp");
-    return Builder.CreateZExt(L, Type::getInt32Ty(getGlobalContext()),
+    return Builder.CreateZExt(L, Type::getInt32Ty(MyGlobalContext),
                               "booltmp");
   default:
     break;
@@ -562,15 +563,15 @@ Value *ExprIfAST::Codegen() {
     return 0;
 
   CondV = Builder.CreateICmpNE(
-      CondV, ConstantInt::get(Type::getInt32Ty(getGlobalContext()), 0),
+      CondV, ConstantInt::get(Type::getInt32Ty(MyGlobalContext), 0),
       "ifcond");
 
   Function *TheFunction = Builder.GetInsertBlock()->getParent();
 
   BasicBlock *ThenBB =
-      BasicBlock::Create(getGlobalContext(), "then", TheFunction);
-  BasicBlock *ElseBB = BasicBlock::Create(getGlobalContext(), "else");
-  BasicBlock *MergeBB = BasicBlock::Create(getGlobalContext(), "ifcont");
+      BasicBlock::Create(MyGlobalContext, "then", TheFunction);
+  BasicBlock *ElseBB = BasicBlock::Create(MyGlobalContext, "else");
+  BasicBlock *MergeBB = BasicBlock::Create(MyGlobalContext, "ifcont");
 
   Builder.CreateCondBr(CondV, ThenBB, ElseBB);
 
@@ -596,7 +597,7 @@ Value *ExprIfAST::Codegen() {
   TheFunction->getBasicBlockList().push_back(MergeBB);
   Builder.SetInsertPoint(MergeBB);
   PHINode *PN =
-      Builder.CreatePHI(Type::getInt32Ty(getGlobalContext()), 2, "iftmp");
+      Builder.CreatePHI(Type::getInt32Ty(MyGlobalContext), 2, "iftmp");
 
   PN->addIncoming(ThenV, ThenBB);
   PN->addIncoming(ElseV, ElseBB);
@@ -612,13 +613,13 @@ Value *ExprForAST::Codegen() {
   Function *TheFunction = Builder.GetInsertBlock()->getParent();
   BasicBlock *PreheaderBB = Builder.GetInsertBlock();
   BasicBlock *LoopBB =
-      BasicBlock::Create(getGlobalContext(), "loop", TheFunction);
+      BasicBlock::Create(MyGlobalContext, "loop", TheFunction);
 
   Builder.CreateBr(LoopBB);
 
   Builder.SetInsertPoint(LoopBB);
 
-  PHINode *Variable = Builder.CreatePHI(Type::getInt32Ty(getGlobalContext()), 2,
+  PHINode *Variable = Builder.CreatePHI(Type::getInt32Ty(MyGlobalContext), 2,
                                         Var_Name.c_str());
   Variable->addIncoming(StartVal, PreheaderBB);
 
@@ -635,7 +636,7 @@ Value *ExprForAST::Codegen() {
       return 0;
   } else {
 
-    StepVal = ConstantInt::get(Type::getInt32Ty(getGlobalContext()), 1);
+    StepVal = ConstantInt::get(Type::getInt32Ty(MyGlobalContext), 1);
   }
 
   Value *NextVar = Builder.CreateAdd(Variable, StepVal, "nextvar");
@@ -645,12 +646,12 @@ Value *ExprForAST::Codegen() {
     return EndCond;
 
   EndCond = Builder.CreateICmpNE(
-      EndCond, ConstantInt::get(Type::getInt32Ty(getGlobalContext()), 0),
+      EndCond, ConstantInt::get(Type::getInt32Ty(MyGlobalContext), 0),
       "loopcond");
 
   BasicBlock *LoopEndBB = Builder.GetInsertBlock();
   BasicBlock *AfterBB =
-      BasicBlock::Create(getGlobalContext(), "afterloop", TheFunction);
+      BasicBlock::Create(MyGlobalContext, "afterloop", TheFunction);
 
   Builder.CreateCondBr(EndCond, LoopBB, AfterBB);
 
@@ -663,14 +664,14 @@ Value *ExprForAST::Codegen() {
   else
     Named_Values.erase(Var_Name);
 
-  return Constant::getNullValue(Type::getInt32Ty(getGlobalContext()));
+  return Constant::getNullValue(Type::getInt32Ty(MyGlobalContext));
 }
 
 Function *FunctionDeclAST::Codegen() {
   std::vector<Type *> Integers(Arguments.size(),
-                               Type::getInt32Ty(getGlobalContext()));
+                               Type::getInt32Ty(MyGlobalContext));
   FunctionType *FT =
-      FunctionType::get(Type::getInt32Ty(getGlobalContext()), Integers, false);
+      FunctionType::get(Type::getInt32Ty(MyGlobalContext), Integers, false);
 
   Function *F =
       Function::Create(FT, Function::ExternalLinkage, Func_Name, Module_Ob);
@@ -710,7 +711,7 @@ Function *FunctionDefnAST::Codegen() {
     Operator_Precedence[Func_Decl->getOperatorName()] =
         Func_Decl->getBinaryPrecedence();
 
-  BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
+  BasicBlock *BB = BasicBlock::Create(MyGlobalContext, "entry", TheFunction);
   Builder.SetInsertPoint(BB);
 
   if (Value *RetVal = Body->Codegen()) {
@@ -795,7 +796,7 @@ int main(int argc, char *argv[]) {
   InitializeNativeTarget();
   InitializeNativeTargetAsmPrinter();
   InitializeNativeTargetAsmParser();
-  LLVMContext &Context = getGlobalContext();
+  LLVMContext &Context = MyGlobalContext;
 
   init_precedence();
 
@@ -835,7 +836,7 @@ int main(int argc, char *argv[]) {
 
   Global_FP = 0;
 
-  Module_Ob->dump();
+  Module_Ob->print(llvm::outs(),nullptr);
 
   return 0;
 }
