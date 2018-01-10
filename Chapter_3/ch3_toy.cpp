@@ -821,7 +821,7 @@ int main(int argc, char *argv[]) {
 
   legacy::FunctionPassManager OurFPM(Module_Ob);
 
-  Module_Ob->setDataLayout(*TheExecutionEngine->getDataLayout());
+  Module_Ob->setDataLayout(TheExecutionEngine->getDataLayout());
   OurFPM.add(createBasicAliasAnalysisPass());
   OurFPM.add(createInstructionCombiningPass());
   OurFPM.add(createReassociatePass());
