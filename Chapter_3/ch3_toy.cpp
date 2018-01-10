@@ -1,3 +1,4 @@
+
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/Analysis/Passes.h"
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
@@ -822,10 +823,12 @@ int main(int argc, char *argv[]) {
   legacy::FunctionPassManager OurFPM(Module_Ob);
 
   Module_Ob->setDataLayout(TheExecutionEngine->getDataLayout());
-  OurFPM.add(createBasicAliasAnalysisPass());
+  //OurFPM.add(createBasicAliasAnalysisPass());
+  OurFPM.add(createCostModelAnalysisPass());
   OurFPM.add(createInstructionCombiningPass());
   OurFPM.add(createReassociatePass());
-  OurFPM.add(createGVNPass());
+  //OurFPM.add(createGVNPass());
+  OurFPM.add(createNewGVNPass());
   OurFPM.add(createCFGSimplificationPass());
 
   OurFPM.doInitialization();
